@@ -50,14 +50,14 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
     const $expand = container.firstChild as HTMLDivElement
     const $shrink = $expand.nextSibling as HTMLDivElement
 
-    $expand.scrollLeft = $shrink.scrollLeft = newWidth + 1000
-    $expand.scrollTop = $shrink.scrollTop = newHeight + 1000
-
     // ensure expand detector can scroll
     // shrink detector use percentage so it will alwayss be able to scroll
     const $expandDetector = $expand.firstChild as HTMLDivElement
     $expandDetector.style.width = newWidth + 1000 + 'px'
     $expandDetector.style.height = newHeight + 1000 + 'px'
+
+    $expand.scrollLeft = $shrink.scrollLeft = newWidth + 1000
+    $expand.scrollTop = $shrink.scrollTop = newHeight + 1000
   }
 
   checkSize = () => {
