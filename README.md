@@ -31,9 +31,7 @@ function App() {
 
 All props are optional.
 
-- `maxWidth?: number` Default `2000`. The detecter needs to be larger than element. See explanation below.
-- `maxHeight?: number` Default `2000`. The detecter needs to be larger than element. See explanation below.
-- `reportInit?: boolean` Default `false`. Report the init rendered value.
+- `reportInit?: boolean` Default `false`. Report the init rendered size.
 - `debounce?: number` Default no debounce.
 - `onSizeChanged?: (width: number, height: number) => void`
 - `onWidthChanged?: (width: number) => void`

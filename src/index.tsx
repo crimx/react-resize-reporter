@@ -1,8 +1,11 @@
 import React, { ComponentProps, CSSProperties, PureComponent } from 'react'
 
 export interface ResizeReporterProps extends ComponentProps<'div'> {
+  /** @deprecated no longer needed */
   maxWidth?: number
+  /** @deprecated no longer needed */
   maxHeight?: number
+  /** Report the init rendered size */
   reportInit?: boolean
   debounce?: number
   onSizeChanged?: (width: number, height: number) => void
@@ -10,7 +13,7 @@ export interface ResizeReporterProps extends ComponentProps<'div'> {
   onHeightChanged?: (height: number) => void
 }
 
-const detecterStyles: CSSProperties = {
+const scrollerStyles: CSSProperties = {
   position: 'absolute',
   top: 0,
   bottom: 0,
@@ -21,7 +24,12 @@ const detecterStyles: CSSProperties = {
   visibility: 'hidden'
 }
 
-const shrinkScrollerStyles: CSSProperties = {
+const expandDetectorStyles: CSSProperties = {
+  transition: '0s',
+  animation: 'none'
+}
+
+const shrinkDetectorStyles: CSSProperties = {
   transition: '0s',
   animation: 'none',
   width: '250%',
@@ -30,22 +38,26 @@ const shrinkScrollerStyles: CSSProperties = {
 
 export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   containerRef = React.createRef<HTMLDivElement>()
-  expandRef = React.createRef<HTMLDivElement>()
-  shrinkRef = React.createRef<HTMLDivElement>()
   lastWidth = 0
   lastHeight = 0
   _debounceStamp: ReturnType<typeof setTimeout> | undefined
 
-  resetPosition = () => {
-    const { maxWidth = 2000, maxHeight = 2000 } = this.props
-    if (this.expandRef.current) {
-      this.expandRef.current.scrollTop = maxHeight
-      this.expandRef.current.scrollLeft = maxWidth
-    }
-    if (this.shrinkRef.current) {
-      this.shrinkRef.current.scrollTop = maxHeight
-      this.shrinkRef.current.scrollLeft = maxWidth
-    }
+  resetPosition = (
+    container: HTMLDivElement,
+    newWidth: number,
+    newHeight: number
+  ) => {
+    const $expand = container.firstChild as HTMLDivElement
+    const $shrink = $expand.nextSibling as HTMLDivElement
+
+    $expand.scrollLeft = $shrink.scrollLeft = newWidth + 1000
+    $expand.scrollTop = $shrink.scrollTop = newHeight + 1000
+
+    // ensure expand detector can scroll
+    // shrink detector use percentage so it will alwayss be able to scroll
+    const $expandDetector = $expand.firstChild as HTMLDivElement
+    $expandDetector.style.width = newWidth + 1000 + 'px'
+    $expandDetector.style.height = newHeight + 1000 + 'px'
   }
 
   checkSize = () => {
@@ -69,7 +81,7 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
           this.props.onHeightChanged(newHeight)
         }
 
-        this.resetPosition()
+        this.resetPosition(this.containerRef.current, newWidth, newHeight)
         this.lastWidth = newWidth
         this.lastHeight = newHeight
       }
@@ -86,10 +98,10 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   }
 
   componentDidMount() {
-    if (process.env.NODE_ENV !== 'production') {
-      if (this.containerRef.current) {
-        const parent = this.containerRef.current.parentElement
-        if (parent) {
+    if (this.containerRef.current) {
+      const parent = this.containerRef.current.parentElement
+      if (parent) {
+        if (process.env.NODE_ENV !== 'production') {
           switch (parent.tagName) {
             case 'area':
             case 'base':
@@ -129,12 +141,7 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
             )
           }
         }
-      }
-    }
 
-    if (this.containerRef.current) {
-      const parent = this.containerRef.current.parentElement
-      if (parent) {
         const newWidth = parent.offsetWidth || 1
         const newHeight = parent.offsetHeight || 1
 
@@ -152,7 +159,7 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
           }
         }
 
-        this.resetPosition()
+        this.resetPosition(this.containerRef.current, newWidth, newHeight)
         this.lastWidth = newWidth
         this.lastHeight = newHeight
       }
@@ -161,8 +168,6 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
 
   render() {
     const {
-      maxWidth = 2000,
-      maxHeight = 2000,
       reportInit,
       debounce,
       onSizeChanged,
@@ -174,26 +179,11 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
 
     return (
       <div ref={this.containerRef} {...restProps}>
-        <div
-          ref={this.expandRef}
-          style={detecterStyles}
-          onScroll={this.onScroll}
-        >
-          <div
-            style={{
-              transition: '0s',
-              animation: 'none',
-              width: maxWidth,
-              height: maxHeight
-            }}
-          ></div>
+        <div style={scrollerStyles} onScroll={this.onScroll}>
+          <div style={expandDetectorStyles}></div>
         </div>
-        <div
-          ref={this.shrinkRef}
-          style={detecterStyles}
-          onScroll={this.onScroll}
-        >
-          <div style={shrinkScrollerStyles}></div>
+        <div style={scrollerStyles} onScroll={this.onScroll}>
+          <div style={shrinkDetectorStyles}></div>
         </div>
         {children}
       </div>
