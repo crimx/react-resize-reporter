@@ -46,9 +46,11 @@ Currently there is no perfect solution for detecting element resizing.
 - [react-resize-aware](https://github.com/FezVrasta/react-resize-aware) injects an `<object>` element and listens to the `resize` event. It seems to have cross-browser [issuses](https://github.com/FezVrasta/react-resize-aware/issues/26).
 - [react-height](https://github.com/nkbt/react-height) relies on React lifecycle which may not truly reflect the element size changing (e.g. Animation delay or Image loading delay).
 
-This library's approach is similar to that of [react-resize-aware](https://github.com/FezVrasta/react-resize-aware). Instead of injecting an `<object>` element, it injects a `<div>` which contains two `<div>` children for detecting expanding and shrinking. Whenever the target resizes, one of the detectors will trigger a scroll event. The algorithm is derived from the [scrolling](https://www.w3.org/TR/cssom-view-1/#scroll-an-element) spec which is implemented in almost every browser.
+This library's approach is similar to that of [react-resize-aware](https://github.com/FezVrasta/react-resize-aware). Instead of injecting an `<object>` element, it injects a `<div>` which contains two `<div>` children for detecting expanding and shrinking. Whenever the target resizes, one of the detectors will trigger a scroll event. The algorithm is derived from the [scrolling](https://www.w3.org/TR/cssom-view-1/#scroll-an-element) spec which is respected by almost every browser.
 
-This also means it comes with the same limitations:
+This also means it comes with the same limitations as react-resize-aware:
 
 - The target element should be able to contain children. Replaced elements like `<img>` are no no. A workaround is to wrap them in a `<div>`.
 - The `position` CSS property of the target element should not be `static` so that the detectors (which always have the same size as the target) can use `absolute` to hide itself.
+
+To trigger a "shrink-to-fit" width calculation for a block element you can apply either float, inline-block, absolutly positioning, flex or other styling methods.
