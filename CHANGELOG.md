@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/crimx/react-resize-reporter/compare/v0.1.2...v0.1.3) (2019-08-03)
+
+
+### Bug Fixes
+
+* apply style to child detector first ([5181fe7](https://github.com/crimx/react-resize-reporter/commit/5181fe7))
+
+
+
 ### [0.1.2](https://github.com/crimx/react-resize-reporter/compare/v0.1.1...v0.1.2) (2019-08-03)
 
 

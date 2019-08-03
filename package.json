@@ -1,6 +1,6 @@
 {
   "name": "react-resize-reporter",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Lightweight React Component that reports width and height changes when its parent resizes.",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
