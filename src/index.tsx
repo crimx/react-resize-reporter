@@ -56,8 +56,11 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
     $expandDetector.style.width = newWidth + 1000 + 'px'
     $expandDetector.style.height = newHeight + 1000 + 'px'
 
-    $expand.scrollLeft = $shrink.scrollLeft = newWidth + 1000
-    $expand.scrollTop = $shrink.scrollTop = newHeight + 1000
+    $expand.scrollLeft = newWidth + 1000
+    $expand.scrollTop = newHeight + 1000
+
+    $shrink.scrollLeft = newWidth * 2.5
+    $shrink.scrollTop = newHeight * 2.5
   }
 
   checkSize = () => {
