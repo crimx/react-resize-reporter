@@ -51,7 +51,7 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
     const $shrink = $expand.nextSibling as HTMLDivElement
 
     // ensure expand detector can scroll
-    // shrink detector use percentage so it will alwayss be able to scroll
+    // shrink detector uses percentage so it will always be able to scroll
     const $expandDetector = $expand.firstChild as HTMLDivElement
     $expandDetector.style.width = newWidth + 1000 + 'px'
     $expandDetector.style.height = newHeight + 1000 + 'px'
@@ -67,8 +67,8 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
     if (this.containerRef.current) {
       const parent = this.containerRef.current.parentElement
       if (parent) {
-        const newWidth = parent.offsetWidth || 1
-        const newHeight = parent.offsetHeight || 1
+        const newWidth = parent.offsetWidth || 0
+        const newHeight = parent.offsetHeight || 0
 
         if (this.props.onSizeChanged) {
           if (newWidth !== this.lastWidth || newHeight !== this.lastHeight) {
@@ -145,8 +145,8 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
           }
         }
 
-        const newWidth = parent.offsetWidth || 1
-        const newHeight = parent.offsetHeight || 1
+        const newWidth = parent.offsetWidth || 0
+        const newHeight = parent.offsetHeight || 0
 
         if (this.props.reportInit) {
           if (this.props.onSizeChanged) {
