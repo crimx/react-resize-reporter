@@ -176,7 +176,7 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
     }
   }
 
-  componentWillMount() {
+  componentWillUnmount() {
     window.clearTimeout(this._debounceTicket)
     window.clearTimeout(this._setScrollPositionTicket)
   }
