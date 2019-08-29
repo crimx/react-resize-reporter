@@ -15,6 +15,14 @@
     "type": "git",
     "url": "git@github.com:crimx/react-resize-reporter.git"
   },
+  "keywords": [
+    "react",
+    "resize",
+    "detector",
+    "onresize",
+    "height",
+    "width"
+  ],
   "author": "CRIMX<straybugs@gmail.com>",
   "license": "MIT",
   "scripts": {
