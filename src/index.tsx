@@ -40,7 +40,8 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   containerRef = React.createRef<HTMLDivElement>()
   lastWidth = 0
   lastHeight = 0
-  _debounceStamp: ReturnType<typeof setTimeout> | undefined
+  _debounceTicket: ReturnType<typeof window.setTimeout> | undefined
+  _setScrollPositionTicket: ReturnType<typeof window.setTimeout> | undefined
 
   resetPosition = (
     container: HTMLDivElement,
@@ -56,11 +57,14 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
     $expandDetector.style.width = newWidth + 1000 + 'px'
     $expandDetector.style.height = newHeight + 1000 + 'px'
 
-    $expand.scrollLeft = newWidth + 1000
-    $expand.scrollTop = newHeight + 1000
+    // after styles are applied
+    this._setScrollPositionTicket = window.setTimeout(() => {
+      $expand.scrollLeft = newWidth + 1000
+      $expand.scrollTop = newHeight + 1000
 
-    $shrink.scrollLeft = newWidth * 2.5
-    $shrink.scrollTop = newHeight * 2.5
+      $shrink.scrollLeft = newWidth * 2.5
+      $shrink.scrollTop = newHeight * 2.5
+    }, 0)
   }
 
   checkSize = () => {
@@ -92,12 +96,13 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   }
 
   onScroll = () => {
-    if (this.props.debounce) {
-      this._debounceStamp && clearTimeout(this._debounceStamp)
-      this._debounceStamp = setTimeout(this.checkSize, this.props.debounce)
-    } else {
-      this.checkSize()
-    }
+    window.clearTimeout(this._debounceTicket)
+    // height and width scrolling happens on next loop
+    // add timeout even for 0
+    this._debounceTicket = window.setTimeout(
+      this.checkSize,
+      this.props.debounce || 0
+    )
   }
 
   componentDidMount() {
@@ -129,7 +134,8 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
               console.error(
                 'react-resize-reporter: ' +
                   `Unsupported parent tag name ${parent.tagName}. ` +
-                  'Change the tag or wrap it in a supported tag(e.g. div).'
+                  'Change the tag or wrap it in a supported tag(e.g. div).',
+                parent
               )
           }
 
@@ -140,7 +146,8 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
           ) {
             console.warn(
               'react-resize-reporter: ' +
-                `The 'position' CSS property of element ${parent.tagName} should not be 'static'.`
+                `The 'position' CSS property of element ${parent.tagName} should not be 'static'.`,
+              parent
             )
           }
         }
@@ -167,6 +174,11 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
         this.lastHeight = newHeight
       }
     }
+  }
+
+  componentWillMount() {
+    window.clearTimeout(this._debounceTicket)
+    window.clearTimeout(this._setScrollPositionTicket)
   }
 
   render() {
