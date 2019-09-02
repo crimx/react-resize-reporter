@@ -1,27 +1,29 @@
 import React, { ComponentProps, CSSProperties, PureComponent } from 'react'
+import { checkParent } from './check-parent'
 
 export interface ResizeReporterProps extends ComponentProps<'div'> {
-  /** @deprecated no longer needed */
-  maxWidth?: number
-  /** @deprecated no longer needed */
-  maxHeight?: number
   /** Report the init rendered size */
   reportInit?: boolean
+  /** Debounce time in millisecond */
   debounce?: number
+  /** Fires when width or height changes */
   onSizeChanged?: (width: number, height: number) => void
-  onWidthChanged?: (width: number) => void
-  onHeightChanged?: (height: number) => void
+  /** Fires only when width changes */
+  onWidthChanged?: (width: number, height: number) => void
+  /** Fires only when height changes */
+  onHeightChanged?: (height: number, width: number) => void
 }
 
 const scrollerStyles: CSSProperties = {
-  position: 'absolute',
-  top: 0,
-  bottom: 0,
-  left: 0,
-  right: 0,
-  zIndex: -10000,
   overflow: 'hidden',
-  visibility: 'hidden'
+  position: 'absolute',
+  zIndex: -1000,
+  top: 0,
+  right: 0,
+  width: '100%',
+  height: '100%',
+  opacity: 0,
+  pointerEvents: 'none'
 }
 
 const expandDetectorStyles: CSSProperties = {
@@ -36,10 +38,13 @@ const shrinkDetectorStyles: CSSProperties = {
   height: '250%'
 }
 
+/**
+ * Scroll event based resize detector
+ */
 export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   containerRef = React.createRef<HTMLDivElement>()
-  lastWidth = 0
-  lastHeight = 0
+  lastWidth = -1
+  lastHeight = -1
   _debounceTicket: ReturnType<typeof window.setTimeout> | undefined
   _setScrollPositionTicket: ReturnType<typeof window.setTimeout> | undefined
 
@@ -81,11 +86,11 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
         }
 
         if (this.props.onWidthChanged && newWidth !== this.lastWidth) {
-          this.props.onWidthChanged(newWidth)
+          this.props.onWidthChanged(newWidth, newHeight)
         }
 
         if (this.props.onHeightChanged && newHeight !== this.lastHeight) {
-          this.props.onHeightChanged(newHeight)
+          this.props.onHeightChanged(newHeight, newWidth)
         }
 
         this.resetPosition(this.containerRef.current, newWidth, newHeight)
@@ -108,70 +113,22 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   componentDidMount() {
     if (this.containerRef.current) {
       const parent = this.containerRef.current.parentElement
+      if (process.env.NODE_ENV !== 'production') {
+        checkParent(parent)
+      }
+
       if (parent) {
-        if (process.env.NODE_ENV !== 'production') {
-          switch (parent.tagName) {
-            case 'area':
-            case 'base':
-            case 'br':
-            case 'col':
-            case 'embed':
-            case 'hr':
-            case 'img':
-            case 'input':
-            case 'keygen':
-            case 'link':
-            case 'menuitem':
-            case 'meta':
-            case 'param':
-            case 'source':
-            case 'track':
-            case 'wbr':
-            case 'script':
-            case 'style':
-            case 'textarea':
-            case 'title':
-              console.error(
-                'react-resize-reporter: ' +
-                  `Unsupported parent tag name ${parent.tagName}. ` +
-                  'Change the tag or wrap it in a supported tag(e.g. div).',
-                parent
-              )
-          }
-
-          const parentStyles = window.getComputedStyle(parent)
-          if (
-            parentStyles &&
-            parentStyles.getPropertyValue('position') === 'static'
-          ) {
-            console.warn(
-              'react-resize-reporter: ' +
-                `The 'position' CSS property of element ${parent.tagName} should not be 'static'.`,
-              parent
-            )
-          }
-        }
-
-        const newWidth = parent.offsetWidth || 0
-        const newHeight = parent.offsetHeight || 0
-
         if (this.props.reportInit) {
-          if (this.props.onSizeChanged) {
-            this.props.onSizeChanged(newWidth, newHeight)
-          }
-
-          if (this.props.onWidthChanged) {
-            this.props.onWidthChanged(newWidth)
-          }
-
-          if (this.props.onHeightChanged) {
-            this.props.onHeightChanged(newHeight)
-          }
+          this.checkSize()
+        } else {
+          this.lastWidth = parent.offsetWidth || 0
+          this.lastHeight = parent.offsetHeight || 0
+          this.resetPosition(
+            this.containerRef.current,
+            this.lastWidth,
+            this.lastHeight
+          )
         }
-
-        this.resetPosition(this.containerRef.current, newWidth, newHeight)
-        this.lastWidth = newWidth
-        this.lastHeight = newHeight
       }
     }
   }
@@ -193,7 +150,13 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
     } = this.props
 
     return (
-      <div ref={this.containerRef} {...restProps}>
+      <div
+        aria-hidden={true}
+        aria-label="react-resize-reporter"
+        tabIndex={-1}
+        {...restProps}
+        ref={this.containerRef}
+      >
         <div style={scrollerStyles} onScroll={this.onScroll}>
           <div style={expandDetectorStyles}></div>
         </div>
