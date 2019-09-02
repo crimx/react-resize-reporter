@@ -2,15 +2,15 @@ import React, { ComponentProps, CSSProperties, PureComponent } from 'react'
 import { checkParent } from './check-parent'
 
 export interface ResizeReporterProps extends ComponentProps<'object'> {
-  /** Report the init rendered size */
+  /** Report the init rendered size. Default false.  */
   reportInit?: boolean
-  /** Debounce time in millisecond */
+  /** Debounce time in millisecond. Default no debounce. */
   debounce?: number
-  /** Fires when width or height changes */
+  /** Fires when width or height changes. */
   onSizeChanged?: (width: number, height: number) => void
-  /** Fires only when width changes */
+  /** Fires only when width changes. */
   onWidthChanged?: (width: number, height: number) => void
-  /** Fires only when height changes */
+  /** Fires only when height changes. */
   onHeightChanged?: (height: number, width: number) => void
 }
 
