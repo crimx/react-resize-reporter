@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/crimx/react-resize-reporter/compare/v0.2.0...v1.0.0) (2019-09-02)
+
+
+### Build System
+
+* update project structure ([a6508ca](https://github.com/crimx/react-resize-reporter/commit/a6508ca))
+
+
+
 ## [0.2.0](https://github.com/crimx/react-resize-reporter/compare/v0.1.7...v0.2.0) (2019-09-02)
 
 
