@@ -9,9 +9,9 @@ export interface ResizeReporterProps extends ComponentProps<'object'> {
   /** Fires when width or height changes. */
   onSizeChanged?: (width: number, height: number) => void
   /** Fires only when width changes. */
-  onWidthChanged?: (width: number, height: number) => void
+  onWidthChanged?: (width: number) => void
   /** Fires only when height changes. */
-  onHeightChanged?: (height: number, width: number) => void
+  onHeightChanged?: (height: number) => void
 }
 
 const containerStyles: CSSProperties = {
@@ -33,7 +33,7 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   $container: HTMLObjectElement | null | undefined
   lastWidth = -1
   lastHeight = -1
-  _debounceTicket: ReturnType<typeof window.setTimeout> | undefined
+  _debounceTicket: number | null | undefined
 
   onLoad = (e: React.SyntheticEvent<HTMLObjectElement, Event>) => {
     if (process.env.NODE_ENV !== 'production') {
@@ -73,11 +73,11 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
       }
 
       if (this.props.onWidthChanged && newWidth !== this.lastWidth) {
-        this.props.onWidthChanged(newWidth, newHeight)
+        this.props.onWidthChanged(newWidth)
       }
 
       if (this.props.onHeightChanged && newHeight !== this.lastHeight) {
-        this.props.onHeightChanged(newHeight, newWidth)
+        this.props.onHeightChanged(newHeight)
       }
 
       this.lastWidth = newWidth
@@ -86,7 +86,11 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   }
 
   onResize = () => {
-    window.clearTimeout(this._debounceTicket)
+    if (this._debounceTicket) {
+      window.clearTimeout(this._debounceTicket)
+      this._debounceTicket = null
+    }
+
     if (this.props.debounce) {
       this._debounceTicket = window.setTimeout(
         this.checkSize,
@@ -98,7 +102,10 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   }
 
   cleanUp = () => {
-    window.clearTimeout(this._debounceTicket)
+    if (this._debounceTicket) {
+      window.clearTimeout(this._debounceTicket)
+      this._debounceTicket = null
+    }
 
     const win =
       this.$container &&

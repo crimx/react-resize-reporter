@@ -15,10 +15,12 @@ yarn add react-resize-reporter
 ## Usage
 
 ```javascript
-// scroll event based implementation
-import { ResizeReporter } from 'react-resize-reporter'
-// or the <object> onresize event based implementation
+// <object> onresize event based implementation
+import ResizeReporter from 'react-resize-reporter'
+// or
 // import { ResizeReporter } from 'react-resize-reporter/object'
+// or the scroll event based implementation
+// import { ResizeReporter } from 'react-resize-reporter/scroll'
 
 function App() {
   return (
@@ -42,9 +44,9 @@ debounce?: number
 /** Fires when width or height changes. */
 onSizeChanged?: (width: number, height: number) => void
 /** Fires only when width changes. */
-onWidthChanged?: (width: number, height: number) => void
+onWidthChanged?: (width: number) => void
 /** Fires only when height changes. */
-onHeightChanged?: (height: number, width: number) => void
+onHeightChanged?: (height: number) => void
 ```
 
 The rest of the props are passed to the injected `<div>` or `<object>` element.

@@ -9,9 +9,9 @@ export interface ResizeReporterProps extends ComponentProps<'div'> {
   /** Fires when width or height changes. */
   onSizeChanged?: (width: number, height: number) => void
   /** Fires only when width changes. */
-  onWidthChanged?: (width: number, height: number) => void
+  onWidthChanged?: (width: number) => void
   /** Fires only when height changes. */
-  onHeightChanged?: (height: number, width: number) => void
+  onHeightChanged?: (height: number) => void
 }
 
 const scrollerStyles: CSSProperties = {
@@ -45,8 +45,8 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   containerRef = React.createRef<HTMLDivElement>()
   lastWidth = -1
   lastHeight = -1
-  _debounceTicket: ReturnType<typeof window.setTimeout> | undefined
-  _setScrollPositionTicket: ReturnType<typeof window.setTimeout> | undefined
+  _debounceTicket: number | null | undefined
+  _setScrollPositionTicket: number | null | undefined
 
   resetPosition = (
     container: HTMLDivElement,
@@ -86,11 +86,11 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
         }
 
         if (this.props.onWidthChanged && newWidth !== this.lastWidth) {
-          this.props.onWidthChanged(newWidth, newHeight)
+          this.props.onWidthChanged(newWidth)
         }
 
         if (this.props.onHeightChanged && newHeight !== this.lastHeight) {
-          this.props.onHeightChanged(newHeight, newWidth)
+          this.props.onHeightChanged(newHeight)
         }
 
         this.resetPosition(this.containerRef.current, newWidth, newHeight)
@@ -101,7 +101,10 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   }
 
   onScroll = () => {
-    window.clearTimeout(this._debounceTicket)
+    if (this._debounceTicket) {
+      window.clearTimeout(this._debounceTicket)
+      this._debounceTicket = null
+    }
     // height and width scrolling happens on next loop
     // add timeout even for 0
     this._debounceTicket = window.setTimeout(
@@ -134,8 +137,14 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
   }
 
   componentWillUnmount() {
-    window.clearTimeout(this._debounceTicket)
-    window.clearTimeout(this._setScrollPositionTicket)
+    if (this._debounceTicket) {
+      window.clearTimeout(this._debounceTicket)
+      this._debounceTicket = null
+    }
+    if (this._setScrollPositionTicket) {
+      window.clearTimeout(this._setScrollPositionTicket)
+      this._setScrollPositionTicket = null
+    }
   }
 
   render() {
