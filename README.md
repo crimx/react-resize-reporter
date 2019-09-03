@@ -32,6 +32,12 @@ function App() {
 }
 ```
 
+## Which One Should I Use?
+
+The `<object>` version is more reliable but the `<object>` element requires more resources (acceptable normally) and could be slow when size changes rapidly (e.g. animation) even with debounce.
+
+Scroll event version is super lightweight and fast but in rare condition the browser may not be ready to update scroll position which may cause size changing not updating. This generally happens when the target element is frequently inserted and removed from DOM.
+
 ## Props
 
 All props are optional.
@@ -61,9 +67,9 @@ Currently there is no perfect solution for detecting element resizing.
 
 This library comes with two implementations with the same API.
 
-The `<object>` resize event based is similar to that of react-resize-aware but with cleaner implementation.
+The `<object>` version is similar to that of react-resize-aware but with cleaner implementation.
 
-The scroll event based injects a `<div>` which contains two `<div>` children for detecting expanding and shrinking. Whenever the target resizes, one of the detectors will trigger a scroll event. The algorithm is derived from the [scrolling](https://www.w3.org/TR/cssom-view-1/#scroll-an-element) spec which is respected by almost every browser.
+The scroll event version injects a `<div>` which contains two `<div>` children for detecting expanding and shrinking. Whenever the target resizes, one of the detectors will trigger a scroll event. The algorithm is derived from the [scrolling](https://www.w3.org/TR/cssom-view-1/#scroll-an-element) spec which is respected by almost every browser.
 
 This also means it comes with the same limitations as react-resize-aware:
 
