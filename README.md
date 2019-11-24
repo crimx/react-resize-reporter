@@ -2,6 +2,8 @@
 
 Lightweight React Component that reports width and height changes when its parent resizes.
 
+![react-resize-reporter](./assets/react-resize-reporter.png)
+
 ## Install
 
 ```
