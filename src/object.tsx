@@ -56,15 +56,18 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
     if (this.props.reportInit) {
       this.checkSize()
     } else {
-      this.lastWidth = e.currentTarget.offsetWidth || 0
-      this.lastHeight = e.currentTarget.offsetHeight || 0
+      const rect = e.currentTarget.getBoundingClientRect()
+      this.lastWidth = rect.width
+      this.lastHeight = rect.height
     }
   }
 
   checkSize = () => {
     if (this.$container) {
-      const newWidth = this.$container.offsetWidth || 0
-      const newHeight = this.$container.offsetHeight || 0
+      const {
+        width: newWidth,
+        height: newHeight
+      } = this.$container.getBoundingClientRect()
 
       if (this.props.onSizeChanged) {
         if (newWidth !== this.lastWidth || newHeight !== this.lastHeight) {
