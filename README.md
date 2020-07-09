@@ -50,11 +50,11 @@ reportInit?: boolean
 /** Debounce time in millisecond. Default no debounce. */
 debounce?: number
 /** Fires when width or height changes. */
-onSizeChanged?: (width: number, height: number) => void
+onSizeChanged?: (width: number, height: number, rect: DOMRect) => void
 /** Fires only when width changes. */
-onWidthChanged?: (width: number) => void
+onWidthChanged?: (width: number, rect: DOMRect) => void
 /** Fires only when height changes. */
-onHeightChanged?: (height: number) => void
+onHeightChanged?: (height: number, rect: DOMRect) => void
 ```
 
 The rest of the props are passed to the injected `<div>` or `<object>` element.
