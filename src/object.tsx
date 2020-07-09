@@ -7,11 +7,11 @@ export interface ResizeReporterProps extends ComponentProps<'object'> {
   /** Debounce time in millisecond. Default no debounce. */
   debounce?: number
   /** Fires when width or height changes. */
-  onSizeChanged?: (width: number, height: number) => void
+  onSizeChanged?: (width: number, height: number, rect: DOMRect) => void
   /** Fires only when width changes. */
-  onWidthChanged?: (width: number) => void
+  onWidthChanged?: (width: number, rect: DOMRect) => void
   /** Fires only when height changes. */
-  onHeightChanged?: (height: number) => void
+  onHeightChanged?: (height: number, rect: DOMRect) => void
 }
 
 const containerStyles: CSSProperties = {
@@ -64,23 +64,21 @@ export class ResizeReporter extends PureComponent<ResizeReporterProps> {
 
   checkSize = () => {
     if (this.$container) {
-      const {
-        width: newWidth,
-        height: newHeight
-      } = this.$container.getBoundingClientRect()
+      const newRect = this.$container.getBoundingClientRect()
+      const { width: newWidth, height: newHeight } = newRect
 
       if (this.props.onSizeChanged) {
         if (newWidth !== this.lastWidth || newHeight !== this.lastHeight) {
-          this.props.onSizeChanged(newWidth, newHeight)
+          this.props.onSizeChanged(newWidth, newHeight, newRect)
         }
       }
 
       if (this.props.onWidthChanged && newWidth !== this.lastWidth) {
-        this.props.onWidthChanged(newWidth)
+        this.props.onWidthChanged(newWidth, newRect)
       }
 
       if (this.props.onHeightChanged && newHeight !== this.lastHeight) {
-        this.props.onHeightChanged(newHeight)
+        this.props.onHeightChanged(newHeight, newRect)
       }
 
       this.lastWidth = newWidth
