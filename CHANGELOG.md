@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.2](https://github.com/crimx/react-resize-reporter/compare/v1.0.1...v1.0.2) (2020-07-09)
+
+
+### Build System
+
+* **deps:** bump acorn from 6.3.0 to 6.4.1 ([d02a6dc](https://github.com/crimx/react-resize-reporter/commit/d02a6dc))
+* **deps:** bump handlebars from 4.1.2 to 4.5.3 ([2e66c49](https://github.com/crimx/react-resize-reporter/commit/2e66c49))
+* **deps:** bump websocket-extensions from 0.1.3 to 0.1.4 ([#3](https://github.com/crimx/react-resize-reporter/issues/3)) ([53c3446](https://github.com/crimx/react-resize-reporter/commit/53c3446))
+
+
+
 ### [1.0.1](https://github.com/crimx/react-resize-reporter/compare/v1.0.0...v1.0.1) (2020-07-05)
 
 
